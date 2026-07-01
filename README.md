@@ -52,8 +52,8 @@ flowchart TB
     end
 
     subgraph Phase2["Phase 2 — AWS (Distributed)"]
-        M["Master EC2\n172.31.33.82\nhadoop-master"]
-        S["Slave EC2\n172.31.39.55\nhadoop-slave"]
+        M["Master EC2\n10.0.1.10\nhadoop-master"]
+        S["Slave EC2\n10.0.1.11\nhadoop-slave"]
         M <-->|"SSH + Private IP"| S
     end
 
@@ -86,7 +86,7 @@ flowchart TB
 | Apache Hadoop | 3.3.6 |
 | Java | OpenJDK 8 |
 | Python | 3 (mapper & reducer via Streaming API) |
-| OS (local) | Linux — hostname `bolt.taha` |
+| OS (local) | Linux — hostname `my-host` |
 | OS (cloud) | Ubuntu 24.04 LTS on AWS |
 | Cloud | EC2 `m7i-flex.large`, region `ap-south-1` (Mumbai) |
 | Hadoop user | `hadoop` (local) / `hdoop` (AWS) |
@@ -302,7 +302,7 @@ hdfs fsck /                    # filesystem integrity check
 |--------|-------|
 | Live DataNodes | 1 |
 | DataNode address | `127.0.0.1:9866` (localhost) |
-| Hostname | `bolt.taha` |
+| Hostname | `my-host` |
 | Configured capacity | 237,980,721,152 bytes (221.64 GB) |
 | Present capacity | 145,545,338,880 bytes (135.55 GB) |
 | DFS remaining | 135.55 GB (61.16%) |
@@ -325,8 +325,8 @@ I did not have a second physical machine, so I provisioned two EC2 instances in 
 
 | Node | Private IP | Public IP | Hostname | Processes (`jps`) |
 |------|-----------|-----------|----------|-------------------|
-| Master | `172.31.33.82` | `43.204.19.113` | `hadoop-master` | NameNode, SecondaryNameNode, ResourceManager |
-| Slave | `172.31.39.55` | `13.233.x.x` | `hadoop-slave` | DataNode, NodeManager |
+| Master | `10.0.1.10` | `x.x.x.x` | `hadoop-master` | NameNode, SecondaryNameNode, ResourceManager |
+| Slave | `10.0.1.11` | `x.x.x.x` | `hadoop-slave` | DataNode, NodeManager |
 
 Instance type: `m7i-flex.large` · OS: Ubuntu 24.04 LTS · User: `hdoop`
 
@@ -336,7 +336,7 @@ AWS blocks all traffic between instances by default. My first attempt failed bec
 
 | Problem | What happened | Fix |
 |---------|---------------|-----|
-| Nodes invisible to each other | Default SG allows nothing internally | Added a **self-referencing rule** on `sg-09707f49c49aa2a50` — All TCP from the same security group |
+| Nodes invisible to each other | Default SG allows nothing internally | Added a **self-referencing rule** on `sg-xxxxxxxx` — All TCP from the same security group |
 | AWS console error | *"You may not specify a referenced group id for an existing IPv4 CIDR rule"* | Cannot mix CIDR (`0.0.0.0/0`) and Security Group ID in one rule — create a separate inbound rule for the SG reference |
 
 ### Phase 3.2 — SSH Authentication
@@ -345,7 +345,7 @@ Passwordless SSH between master and slave is required for Hadoop to start remote
 
 | Problem | What happened | Fix |
 |---------|---------------|-----|
-| PEM key rejected locally | Permissions were `0664` (too open) | `chmod 400 taha-key.pem` |
+| PEM key rejected locally | Permissions were `0664` (too open) | `chmod 400 your-key.pem` |
 | `Permission denied (publickey)` | Ubuntu 24.04 disables password auth by default | Edited SSH config on the slave |
 | Settings not taking effect | `60-cloudimg-settings.conf` was overriding `sshd_config` | Edited the cloud-init override file, then `sudo systemctl restart sshd` |
 | Master cannot reach slave | No trust established | `ssh-copy-id -i ~/.ssh/id_rsa.pub hdoop@hadoop-slave` |
@@ -359,8 +359,8 @@ sudo nano /etc/hosts
 ```
 
 ```
-172.31.33.82   hadoop-master
-172.31.39.55   hadoop-slave
+  10.0.1.10   hadoop-master
+  10.0.1.11   hadoop-slave
 ```
 
 Always use **private IPs** inside the cluster — not public IPs. Public IPs change; private IPs stay consistent within the VPC.
@@ -420,7 +420,7 @@ hdfs dfsadmin -report
 | Metric | Value |
 |--------|-------|
 | Live DataNodes | 1 |
-| DataNode | `172.31.39.55:9866 (hadoop-slave)` |
+| DataNode | `10.0.1.11:9866 (hadoop-slave)` |
 | Configured capacity | 24,883,167,232 bytes (23.17 GB) |
 | Present capacity | 19,697,930,240 bytes (18.35 GB) |
 | DFS remaining | 79.16% |
@@ -467,7 +467,7 @@ hdfs dfs -ls /test.txt
 **My first mistake:** I tried `hdfs dfs -put` before starting daemons and got:
 
 ```
-Connection refused: Call From bolt.taha/127.0.1.1 to localhost:9000 failed
+Connection refused: Call From my-host/127.0.1.1 to localhost:9000 failed
 ```
 
 **Fix:** run `start-all.sh` first, confirm with `jps`, then upload.
@@ -718,9 +718,6 @@ hdfs dfs -cat /wordcount_output/part-00000
 │   ├── mapper.py                     # Map phase script
 │   ├── reducer.py                    # Reduce phase script
 │   └── test.txt                      # Sample input data
-├── docs/
-│   ├── technical-report.pdf          # Full write-up with terminal logs
-│   └── technical-report.tex          # LaTeX source
 └── .gitignore
 ```
 
@@ -747,7 +744,7 @@ Big Data · Distributed Systems · Cloud Infrastructure
 
 I built this project to understand Hadoop properly — not just pass a checklist. The AWS multi-node setup taught me more about networking and SSH than any lecture did. I still have a lot to learn (Spark, Hive, production-grade replication), but this is a solid foundation I am proud to share.
 
-For the full technical report with complete terminal logs, see [`docs/technical-report.pdf`](docs/technical-report.pdf).
+The full technical report artifacts were removed from the public repo for privacy.
 
 ---
 
