@@ -1,0 +1,733 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{graphicx}
+
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=none,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+\title{\textbf{Big Data Analytics - Assignment 1\\Hadoop Practice Tasks}}
+\author{Muhammad Taha \\ Roll No: 23P\_0559 \\ Section: BCS(6A)}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Task 0: Installation (Single Node)}
+
+I successfully completed the installation of Apache Hadoop (Single Node). I configured the environment variables and successfully started the daemon services. My terminal screenshot outputs are attached below.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{1-Task-0.png}
+    \caption{Installation and Configuration details - Part 1}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{2-Task-0.png}
+    \caption{Configuration details - Part 2}
+\end{figure}
+
+\section*{Task 1: Creating Your Directory Space}
+
+I created my user space on HDFS, and I verified and updated the permissions to restrict access to the directory using the terminal commands below:
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Task-1.png}
+    \caption{Task 1 Output: HDFS Directory Creation and Permissions}
+\end{figure}
+
+\section*{Task 2: Understanding the System}
+
+I executed the system health and topology commands to query the HDFS status. Below is my parsed output and answers to the required questions.
+
+\subsection*{Questions \& Answers}
+
+\begin{enumerate}
+    \item \textbf{How many datanodes are part of the hadoop topology?} \\
+    According to the \texttt{hdfs dfsadmin -report} and \texttt{hdfs fsck /} outputs, there is \textbf{1} live datanode.
+    
+    \item \textbf{What are the IP addresses of these datanodes?} \\
+    The IP address of the live datanode is \textbf{127.0.0.1} (running locally on port 9866).
+    
+    \item \textbf{What is the configured and present capacity of the HDFS?} \\
+    Based on the report:
+    \begin{itemize}
+        \item \textbf{Configured Capacity:} 237,980,721,152 bytes (221.64 GB)
+        \item \textbf{Present Capacity:} 145,545,338,880 bytes (135.55 GB)
+    \end{itemize}
+    
+    \item \textbf{What is the default file replication count?} \\
+    According to the \texttt{hdfs fsck /} output, the default replication factor is \textbf{1}.
+\end{enumerate}
+
+\subsection*{Terminal Execution Traces}
+
+\begin{lstlisting}[language=bash, title={Terminal Output: Task 2 System Queries}]
+hadoop@bolt:~$ hdfs dfsadmin -printTopology
+hdfs dfsadmin -report
+hdfs fsck /
+Rack: /default-rack
+   127.0.0.1:9866 (localhost) In Service
+
+Configured Capacity: 237980721152 (221.64 GB)
+Present Capacity: 145545338880 (135.55 GB)
+DFS Remaining: 145545306112 (135.55 GB)
+DFS Used: 32768 (32 KB)
+DFS Used%: 0.00%
+Replicated Blocks:
+	Under replicated blocks: 0
+	Blocks with corrupt replicas: 0
+	Missing blocks: 0
+	Missing blocks (with replication factor 1): 0
+	Low redundancy blocks with highest priority to recover: 0
+	Pending deletion blocks: 0
+Erasure Coded Block Groups: 
+	Low redundancy block groups: 0
+	Block groups with corrupt internal blocks: 0
+	Missing block groups: 0
+	Low redundancy blocks with highest priority to recover: 0
+	Pending deletion blocks: 0
+
+-------------------------------------------------
+Live datanodes (1):
+
+Name: 127.0.0.1:9866 (localhost)
+Hostname: bolt.taha
+Decommission Status : Normal
+Configured Capacity: 237980721152 (221.64 GB)
+DFS Used: 32768 (32 KB)
+Non DFS Used: 80272113664 (74.76 GB)
+DFS Remaining: 145545306112 (135.55 GB)
+DFS Used%: 0.00%
+DFS Remaining%: 61.16%
+Configured Cache Capacity: 0 (0 B)
+Cache Used: 0 (0 B)
+Cache Remaining: 0 (0 B)
+Cache Used%: 100.00%
+Cache Remaining%: 0.00%
+Xceivers: 0
+Last contact: Wed Mar 25 00:44:52 PKT 2026
+Last Block Report: Wed Mar 25 00:40:31 PKT 2026
+Num of Blocks: 0
+
+
+Connecting to namenode via http://localhost:9870/fsck?ugi=hadoop&path=%2F
+FSCK started by hadoop (auth:SIMPLE) from /127.0.0.1 for path / at Wed Mar 25 00:44:57 PKT 2026
+
+
+Status: HEALTHY
+ Number of data-nodes:	1
+ Number of racks:		1
+ Total dirs:			4
+ Total symlinks:		0
+
+Replicated Blocks:
+ Total size:	0 B
+ Total files:	0
+ Total blocks (validated):	0
+ Minimally replicated blocks:	0
+ Over-replicated blocks:	0
+ Under-replicated blocks:	0
+ Mis-replicated blocks:		0
+ Default replication factor:	1
+ Average block replication:	0.0
+ Missing blocks:		0
+ Corrupt blocks:		0
+ Missing replicas:		0
+ Blocks queued for replication:	0
+
+Erasure Coded Block Groups:
+ Total size:	0 B
+ Total files:	0
+ Total block groups (validated):	0
+ Minimally erasure-coded block groups:	0
+ Over-erasure-coded block groups:	0
+ Under-erasure-coded block groups:	0
+ Unsatisfactory placement block groups:	0
+ Average block group size:	0.0
+ Missing block groups:		0
+ Corrupt block groups:		0
+ Missing internal blocks:	0
+ Blocks queued for replication:	0
+FSCK ended at Wed Mar 25 00:44:57 PKT 2026 in 7 milliseconds
+
+
+The filesystem under path '/' is HEALTHY
+hadoop@bolt:~$
+\end{lstlisting}
+
+\section*{Task 3: Expanding to Multiple Nodes}
+
+To document my "Zero to Hero" experience for Task 3, I am presenting it as a journey of overcoming real-world cloud networking challenges. I built a production-ready bridge between two virtual servers in the AWS Mumbai (ap-south-1) region.
+
+Here is the full breakdown of my experience, the technical details, and the bugs I conquered:
+
+\subsection*{Phase 1: Infrastructure Setup (AWS EC2)}
+I bypassed the limitation of not having two physical machines by provisioning two \texttt{m7i-flex.large} instances on AWS Ubuntu 24.04 LTS.
+\begin{itemize}
+    \item \textbf{Master Node}: \texttt{hdoop@172.31.33.82} (Public IP: 43.204.19.113)
+    \item \textbf{Slave Node}: \texttt{hdoop@172.31.39.55} (Public IP: 13.233.x.x)
+\end{itemize}
+
+\subsection*{Phase 2: The Security "Great Wall" (Bugs \& Solutions)}
+This was my first major hurdle. I had to configure the Security Groups to allow the nodes to talk.
+\begin{itemize}
+    \item \textbf{The Bug}: The instances couldn't "see" each other initially because AWS blocks all traffic by default.
+    \item \textbf{The Struggle}: I encountered an error: "You may not specify a referenced group id for an existing IPv4 CIDR rule."
+    \item \textbf{The Fix}: I learned that I cannot mix CIDR (0.0.0.0/0) with Security Group IDs in one rule. I created a Self-Referencing Rule for \texttt{sg-09707f49c49aa2a50} to allow All TCP traffic internally.
+\end{itemize}
+
+\subsection*{Phase 3: The SSH Authentication Battle}
+This is where I had to do the most troubleshooting.
+\begin{itemize}
+    \item \textbf{The Permission Bug}: My local laptop rejected the \texttt{.pem} key because permissions were "too open" (0664). \\
+    \textit{Solution}: I used \texttt{chmod 400 taha-key.pem} to lock it down.
+    \item \textbf{The "Permission Denied (publickey)" Bug}: When I tried to link the Master to the Slave, AWS blocked the connection because \textit{PasswordAuthentication} was disabled. 
+    \item \textbf{The Discovery}: I found that Ubuntu 24.04 on AWS has a "double lock." Even after changing the main \texttt{sshd\_config}, a hidden file \texttt{60-cloudimg-settings.conf} was overriding my settings.
+    \item \textbf{The Fix}: I edited the cloud-init settings on the Slave, restarted the SSH service, and successfully performed the SSH Handshake (\texttt{ssh-copy-id}).
+\end{itemize}
+
+\subsection*{Phase 4: Hadoop Configuration (The Brain)}
+I customized the XML files to move from a "Local" mode to a "Distributed" mode.
+\begin{itemize}
+    \item \textbf{The Setup}: I created dedicated directories (\texttt{tmpdata, dfsdata}) under \texttt{/home/hdoop/} to ensure the system had write permissions.
+    \item \textbf{The Logic}: I mapped the Private IPs in \texttt{/etc/hosts} so the cluster uses names (\texttt{hadoop-master, hadoop-slave}) instead of manually changing IPs.
+    \item \textbf{Synchronization}: I used \texttt{scp} to "push" the Master’s configuration to the Slave, ensuring the cluster was perfectly synced.
+\end{itemize}
+
+\subsection*{Phase 5: Result \& Verification}
+I successfully formatted the HDFS and started the daemons.
+\begin{itemize}
+    \item \textbf{Master Processes (JPS)}: NameNode, SecondaryNameNode, ResourceManager.
+    \item \textbf{Slave Processes (JPS)}: DataNode, NodeManager.
+\end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{"Task 3 jpf command.png"}
+    \caption{Task 3 Verification: Running Java Processes (jps)}
+\end{figure}
+
+\begin{itemize}
+    \item \textbf{The "Proof"}: I ran \texttt{hdfs dfsadmin -report}, which showed \textbf{Live Datanodes: 1}, confirming the Slave was successfully reporting its storage to the Master across the network. My terminal output and screenshots are provided below.
+\end{itemize}
+
+\begin{lstlisting}[language=bash, title={Terminal Output: HDFS DFSAdmin Report (Task 3)}]
+hdoop@ip-172-31-33-82:~$ hdfs dfsadmin -report
+Configured Capacity: 24883167232 (23.17 GB)
+Present Capacity: 19697930240 (18.35 GB)
+DFS Remaining: 19697905664 (18.35 GB)
+DFS Used: 24576 (24 KB)
+DFS Used%: 0.00%
+Replicated Blocks:
+	Under replicated blocks: 0
+	Blocks with corrupt replicas: 0
+	Missing blocks: 0
+	Missing blocks (with replication factor 1): 0
+	Low redundancy blocks with highest priority to recover: 0
+	Pending deletion blocks: 0
+Erasure Coded Block Groups: 
+	Low redundancy block groups: 0
+	Block groups with corrupt internal blocks: 0
+	Missing block groups: 0
+	Low redundancy blocks with highest priority to recover: 0
+	Pending deletion blocks: 0
+
+-------------------------------------------------
+Live datanodes (1):
+
+Name: 172.31.39.55:9866 (hadoop-slave)
+Hostname: hadoop-slave
+Decommission Status : Normal
+Configured Capacity: 24883167232 (23.17 GB)
+DFS Used: 24576 (24 KB)
+Non DFS Used: 5168459776 (4.81 GB)
+DFS Remaining: 19697905664 (18.35 GB)
+DFS Used%: 0.00%
+DFS Remaining%: 79.16%
+Configured Cache Capacity: 0 (0 B)
+Cache Used: 0 (0 B)
+Cache Remaining: 0 (0 B)
+Cache Used%: 100.00%
+Cache Remaining%: 0.00%
+Xceivers: 0
+Last contact: Wed Mar 25 18:45:11 UTC 2026
+Last Block Report: Wed Mar 25 18:44:56 UTC 2026
+Num of Blocks: 0
+
+
+hdoop@ip-172-31-33-82:~$ 
+\end{lstlisting}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{"-report.png"}
+    \caption{Task 3 Verification: DFSAdmin Report (Part 1)}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{"-report2.png"}
+    \caption{Task 3 Verification: DFSAdmin Report (Part 2)}
+\end{figure}
+
+\subsection*{Summary for Task}
+\textit{"In this task, I successfully deployed a multi-node Hadoop 3.3.6 cluster on AWS. I overcame significant cloud networking challenges, specifically regarding AWS Security Group self-referencing and Ubuntu 24.04 SSH hardening. By establishing a passwordless SSH trust between the nodes and configuring the HDFS to communicate via Private IPs, I achieved a fully functional distributed environment with one Master and one Slave node."}
+
+\section*{Task 4: Word Count Application}
+
+\subsection*{Process Overview}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{"task-04-test-file.png"}
+    \caption{Task 4: Initial \texttt{test.txt} file creation}
+\end{figure}
+
+\textbf{1. Environment Synchronization}
+\begin{itemize}
+    \item \textbf{What I did:} Switched from the default user to the dedicated \texttt{hadoop} user (\texttt{su - hadoop}).
+    \item \textbf{Why?:} Hadoop requires specific SSH key permissions and directory ownership that are only configured for the hadoop service user. This ensures the NameNode can "talk" to the DataNode without a password.
+\end{itemize}
+
+\textbf{2. HDFS Data Ingestion (Task 3 \& 4 Start)}
+\begin{itemize}
+    \item \textbf{What I did:} Moved a local Linux file into the Hadoop Distributed File System using \texttt{hdfs dfs -put test.txt /test.txt}.
+    \item \textbf{Technical Detail:} Verified the "health" of the file using \texttt{hdfs fsck}. Checked the Block Size (128MB) and Replication Factor (1).
+    \item \textbf{Logic:} Even though the file was small (122 bytes), HDFS allocated a full block metadata entry for it.
+\end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{"Upload-Get Info:.png"}
+    \caption{Task 4: Start Daemons and HDFS Data Upload Commands}
+\end{figure}
+
+\textbf{3. Python Streaming Implementation}
+\begin{itemize}
+    \item Since Hadoop is written in Java, I used the Hadoop Streaming Utility to run Python code.
+    \item \textbf{Mapper Logic:} Wrote a script to read lines from \texttt{stdin}, split them by commas (as per lab requirements), and output a "Key-Value" pair (Word + 1).
+    \item \textbf{Reducer Logic:} Wrote a script to aggregate these pairs. It keeps a running total of each "Key" and prints the final sum when the key changes.
+    \item \textbf{Permissions:} Used \texttt{chmod u+x} to make the Python scripts "executable" binaries that the Hadoop framework could call.
+\end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{"mapper.py-reducer.py-Set Permissions.png"}
+    \caption{Task 4: Python Mapper, Reducer Scripts \& Local Testing}
+\end{figure}
+
+\textbf{4. MapReduce Execution \& Sorting}
+\begin{itemize}
+    \item This is the heart of the "Big Data" process.
+    \item \textbf{What I did:} Ran the \texttt{hadoop-streaming-3.3.6.jar} command.
+    \item \textbf{The Process:}
+    \begin{enumerate}
+        \item \textbf{Map Phase:} The Mapper read the file from HDFS and generated pairs.
+        \item \textbf{Shuffle \& Sort:} Hadoop automatically sorted the Mapper's output by "Key" (the words) so that all identical words were sent to the same Reducer.
+        \item \textbf{Reduce Phase:} The Reducer added the numbers and saved the final result back to HDFS in the \texttt{/query1\_output} folder.
+    \end{enumerate}
+\end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{"actual MapReduce job..png"}
+    \caption{Task 4: Executing the MapReduce Streaming Job on Hadoop}
+\end{figure}
+
+\textbf{5. Result Verification}
+\begin{itemize}
+    \item \textbf{What I did:} Used \texttt{hdfs dfs -cat} to read the output file \texttt{part-00000}.
+    \item \textbf{The Outcome:} Successfully converted unstructured text into a structured word count, proving the cluster was functional.
+\end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{"final-ouput.png"}
+    \caption{Task 4: Final Word Count Output in HDFS}
+\end{figure}
+
+\subsection*{Summary for Task}
+\textit{"In this lab, a pseudo-distributed Hadoop 3.3.6 cluster was utilized to perform a Word Count MapReduce job. The implementation involved configuring HDFS storage parameters, developing Python-based Mapper and Reducer scripts, and executing the job via the Hadoop Streaming API. The results were verified by inspecting the HDFS output part-files, confirming that the framework correctly handled the data partitioning and aggregation across the local nodes."}
+\subsection*{File Properties Questions}
+
+\begin{enumerate}
+    \item \textbf{What is the default block size (in Mb) of the test.txt file?} \\
+    The default block size is 128 MB. In Hadoop 3.x, the default \texttt{dfs.blocksize} is 134,217,728 bytes. Even though the \texttt{test.txt} file is small (122 bytes), HDFS allocates it into one full 128MB block metadata entry.
+    \item \textbf{Is there any missing replicas for the file test.txt?} \\
+    No, there are 0 missing replicas. The \texttt{hdfs fsck} report showed "Missing replicas: 0 (0.0 \%)". Since the DataNode is live on the local system, the single required replica was successfully stored.
+    \item \textbf{What command will you use to change this block size? (remember to convert into bytes)} \\
+    Use the \texttt{-Ddfs.blocksize} flag during the put command:\\
+    \texttt{hdfs dfs -Ddfs.blocksize=1048576 -put test.txt /test\_small.txt}\\
+    (Note: 1048576 bytes = 1 MB).
+    \item \textbf{How many blocks are used by test.txt after changing block size above?} \\
+    1 Block. Since the file size (122 bytes) is much smaller than the new 1MB (1,048,576 bytes) limit, it still fits within a single block.
+    \item \textbf{How many missing replicas are there for file test.txt after block change?} \\
+    0 Missing Replicas. As long as the single DataNode is running, the file is considered healthy with a replication factor of 1.
+    \item \textbf{Why are there missing replicas?} \\
+    In a Pseudo-Distributed/Single-Node setup, there is only one DataNode. If the replication factor is set to 3, Hadoop tries to find 3 different nodes. Since it only finds one, it reports the other 2 as "missing" because it cannot provide the requested level of redundancy.
+\end{enumerate}
+
+\subsection*{MapReduce Execution Logs \& answers}
+
+\begin{enumerate}
+    \item \textbf{What was the <key,value> pair used in this query?} \\
+    The pair was \texttt{<String, Float>}. The Key is the Word (extracted by the mapper) and the Value is 1.0 (converted to a float by the reducer for calculation).
+    \item \textbf{How many mapper threads were used?} \\
+    1. The log showed "Launched map tasks=1" because the input file was smaller than one HDFS block.
+    \item \textbf{How many reducer threads were used?} \\
+    1. The log showed "Launched reduce tasks=1", which is the default for a single output stream.
+    \item \textbf{What was the time spent by all mapper threads?} \\
+    148 ms. (Based on Total time spent by all map tasks (ms) in your log).
+    \item \textbf{What was the time spent by all reducer threads?} \\
+    645 ms. (Based on Total time spent by all reduce tasks (ms) in your log).
+    \item \textbf{What is the file name in which your output is located?} \\
+    The final result is stored in \texttt{/query1\_output/part-00000} in the HDFS directory.
+\end{enumerate}
+
+\subsection*{Terminal Execution Traces}
+
+\begin{lstlisting}[language=bash, title={Terminal Output: Task 4 MapReduce Job}]
+sumuhammad-taha@bolt:~$ su - hadoop 
+Password: 
+hadoop@bolt:~$ nano test.txt
+hadoop@bolt:~$ hdfs dfs -put test.txt /test.txt
+put: Call From bolt.taha/127.0.1.1 to localhost:9000 failed on connection exception: java.net.ConnectException: Connection refused; For more details see:  http://wiki.apache.org/hadoop/ConnectionRefused
+hadoop@bolt:~$ uhammad-taha@bolt:~$ su - hadoop 
+Password: 
+hadoop@bolt:~$ nano test.txt
+hadoop@bolt:~$ hdfs dfs -put test.txt /test.txt
+put: Call From bolt.taha/127.0.1.1 to localhost:9000 failed on connection exception: java.net.ConnectException: Connection refused; For more details see:  http://wiki.apache.org/hadoop/ConnectionRefused
+hadoop@bolt:~$ 
+
+^C
+hadoop@bolt:~$ [200~start-all.sh~
+[200~start-all.sh~: command not found
+hadoop@bolt:~$ start-all.sh
+WARNING: Attempting to start all Apache Hadoop daemons as hadoop in 10 seconds.
+WARNING: This is not a recommended production deployment configuration.
+WARNING: Use CTRL-C to abort.
+Starting namenodes on [localhost]
+Starting datanodes
+Starting secondary namenodes [bolt.taha]
+Starting resourcemanager
+Starting nodemanagers
+hadoop@bolt:~$ jps
+7746 DataNode
+7509 NameNode
+7925 SecondaryNameNode
+8326 NodeManager
+8711 Jps
+8190 ResourceManager
+hadoop@bolt:~$ nano test.txt
+hadoop@bolt:~$ hdfs dfs -put test.txt /test.txt
+hadoop@bolt:~$ hdfs fsck /test.txt -files -blocks -locations
+Connecting to namenode via http://localhost:9870/fsck?ugi=hadoop&files=1&blocks=1&locations=1&path=%2Ftest.txt
+FSCK started by hadoop (auth:SIMPLE) from /127.0.0.1 for path /test.txt at Fri Mar 27 00:18:34 PKT 2026
+
+/test.txt 122 bytes, replicated: replication=1, 1 block(s):  OK
+0. BP-633898496-127.0.1.1-1774379871903:blk_1073741825_1001 len=122 Live_repl=1  [DatanodeInfoWithStorage[127.0.0.1:9866,DS-b2ce03d3-64bd-47cb-9a77-f1fae10038f6,DISK]]
+
+
+Status: HEALTHY
+ Number of data-nodes:	1
+ Number of racks:		1
+ Total dirs:			0
+ Total symlinks:		0
+
+Replicated Blocks:
+ Total size:	122 B
+ Total files:	1
+ Total blocks (validated):	1 (avg. block size 122 B)
+ Minimally replicated blocks:	1 (100.0 %)
+ Over-replicated blocks:	0 (0.0 %)
+ Under-replicated blocks:	0 (0.0 %)
+ Mis-replicated blocks:		0 (0.0 %)
+ Default replication factor:	1
+ Average block replication:	1.0
+ Missing blocks:		0
+ Corrupt blocks:		0
+ Missing replicas:		0 (0.0 %)
+ Blocks queued for replication:	0
+
+Erasure Coded Block Groups:
+ Total size:	0 B
+ Total files:	0
+ Total block groups (validated):	0
+ Minimally erasure-coded block groups:	0
+ Over-erasure-coded block groups:	0
+ Under-erasure-coded block groups:	0
+ Unsatisfactory placement block groups:	0
+ Average block group size:	0.0
+ Missing block groups:		0
+ Corrupt block groups:		0
+ Missing internal blocks:	0
+ Blocks queued for replication:	0
+FSCK ended at Fri Mar 27 00:18:34 PKT 2026 in 8 milliseconds
+
+
+The filesystem under path '/test.txt' is HEALTHY
+hadoop@bolt:~$ ls
+hadoop-3.3.6  hadoop-3.3.6.tar.gz  snap  test.txt
+hadoop@bolt:~$ nano mapper.py
+hadoop@bolt:~$ nano reducer.py
+hadoop@bolt:~$ chmod u+x mapper.py reducer.py
+hadoop@bolt:~$ cat test.txt | ./mapper.py | sort | ./reducer.py
+FAST	6.0
+Hadoop	4.0
+Peshawar	4.0
+TandoAllahyar	2.0
+hadoop@bolt:~$ hadoop jar ~/hadoop-3.3.6/share/hadoop/tools/lib/hadoop-streaming-3.3.6.jar \
+-file ./mapper.py -mapper "./mapper.py" \
+-file ./reducer.py -reducer "./reducer.py" \
+-input /test.txt \
+-output /query1_output
+2026-03-27 00:21:35,700 WARN streaming.StreamJob: -file option is deprecated, please use generic option -files instead.
+packageJobJar: [./mapper.py, ./reducer.py] [] /tmp/streamjob4961342560208293573.jar tmpDir=null
+2026-03-27 00:21:36,651 INFO impl.MetricsConfig: Loaded properties from hadoop-metrics2.properties
+2026-03-27 00:21:36,767 INFO impl.MetricsSystemImpl: Scheduled Metric snapshot period at 10 second(s).
+2026-03-27 00:21:36,767 INFO impl.MetricsSystemImpl: JobTracker metrics system started
+2026-03-27 00:21:36,785 WARN impl.MetricsSystemImpl: JobTracker metrics system already initialized!
+2026-03-27 00:21:37,030 INFO mapred.FileInputFormat: Total input files to process : 1
+2026-03-27 00:21:37,099 INFO mapreduce.JobSubmitter: number of splits:1
+2026-03-27 00:21:37,245 INFO mapreduce.JobSubmitter: Submitting tokens for job: job_local477981434_0001
+2026-03-27 00:21:37,245 INFO mapreduce.JobSubmitter: Executing with tokens: []
+2026-03-27 00:21:37,457 INFO mapred.LocalDistributedCacheManager: Localized file:/home/hadoop/mapper.py as file:/home/hadoop/hadoop-3.3.6/tmpdata/mapred/local/job_local477981434_0001_1c10918c-ade4-45d7-864d-07d09d8a04a7/mapper.py
+2026-03-27 00:21:37,474 INFO mapred.LocalDistributedCacheManager: Localized file:/home/hadoop/reducer.py as file:/home/hadoop/hadoop-3.3.6/tmpdata/mapred/local/job_local477981434_0001_5c0a32c5-d2ed-4d00-a283-8fe6a8c81ca6/reducer.py
+2026-03-27 00:21:37,563 INFO mapreduce.Job: The url to track the job: http://localhost:8080/
+2026-03-27 00:21:37,564 INFO mapred.LocalJobRunner: OutputCommitter set in config null
+2026-03-27 00:21:37,565 INFO mapreduce.Job: Running job: job_local477981434_0001
+2026-03-27 00:21:37,571 INFO mapred.LocalJobRunner: OutputCommitter is org.apache.hadoop.mapred.FileOutputCommitter
+2026-03-27 00:21:37,581 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 2
+2026-03-27 00:21:37,581 INFO output.FileOutputCommitter: FileOutputCommitter skip cleanup _temporary folders under output directory:false, ignore cleanup failures: false
+2026-03-27 00:21:37,625 INFO mapred.LocalJobRunner: Waiting for map tasks
+2026-03-27 00:21:37,630 INFO mapred.LocalJobRunner: Starting task: attempt_local477981434_0001_m_000000_0
+2026-03-27 00:21:37,654 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 2
+2026-03-27 00:21:37,654 INFO output.FileOutputCommitter: FileOutputCommitter skip cleanup _temporary folders under output directory:false, ignore cleanup failures: false
+2026-03-27 00:21:37,667 INFO mapred.Task:  Using ResourceCalculatorProcessTree : [ ]
+2026-03-27 00:21:37,676 INFO mapred.MapTask: Processing split: hdfs://localhost:9000/test.txt:0+122
+2026-03-27 00:21:37,697 INFO mapred.MapTask: numReduceTasks: 1
+2026-03-27 00:21:37,725 INFO mapred.MapTask: (EQUATOR) 0 kvi 26214396(104857584)
+2026-03-27 00:21:37,725 INFO mapred.MapTask: mapreduce.task.io.sort.mb: 100
+2026-03-27 00:21:37,725 INFO mapred.MapTask: soft limit at 83886080
+2026-03-27 00:21:37,725 INFO mapred.MapTask: bufstart = 0; bufvoid = 104857600
+2026-03-27 00:21:37,725 INFO mapred.MapTask: kvstart = 26214396; length = 6553600
+2026-03-27 00:21:37,727 INFO mapred.MapTask: Map output collector class = org.apache.hadoop.mapred.MapTask$MapOutputBuffer
+2026-03-27 00:21:37,732 INFO streaming.PipeMapRed: PipeMapRed exec [/home/hadoop/./mapper.py]
+2026-03-27 00:21:37,735 INFO Configuration.deprecation: mapred.work.output.dir is deprecated. Instead, use mapreduce.task.output.dir
+2026-03-27 00:21:37,735 INFO Configuration.deprecation: mapred.local.dir is deprecated. Instead, use mapreduce.cluster.local.dir
+2026-03-27 00:21:37,736 INFO Configuration.deprecation: map.input.file is deprecated. Instead, use mapreduce.map.input.file
+2026-03-27 00:21:37,736 INFO Configuration.deprecation: map.input.length is deprecated. Instead, use mapreduce.map.input.length
+2026-03-27 00:21:37,736 INFO Configuration.deprecation: mapred.job.id is deprecated. Instead, use mapreduce.job.id
+2026-03-27 00:21:37,736 INFO Configuration.deprecation: mapred.task.partition is deprecated. Instead, use mapreduce.task.partition
+2026-03-27 00:21:37,737 INFO Configuration.deprecation: map.input.start is deprecated. Instead, use mapreduce.map.input.start
+2026-03-27 00:21:37,738 INFO Configuration.deprecation: mapred.task.is.map is deprecated. Instead, use mapreduce.task.ismap
+2026-03-27 00:21:37,738 INFO Configuration.deprecation: mapred.task.id is deprecated. Instead, use mapreduce.task.attempt.id
+2026-03-27 00:21:37,738 INFO Configuration.deprecation: mapred.tip.id is deprecated. Instead, use mapreduce.task.id
+2026-03-27 00:21:37,739 INFO Configuration.deprecation: mapred.skip.on is deprecated. Instead, use mapreduce.job.skiprecords
+2026-03-27 00:21:37,739 INFO Configuration.deprecation: user.name is deprecated. Instead, use mapreduce.job.user.name
+2026-03-27 00:21:37,859 INFO streaming.PipeMapRed: R/W/S=1/0/0 in:NA [rec/s] out:NA [rec/s]
+2026-03-27 00:21:37,862 INFO streaming.PipeMapRed: Records R/W=1/1
+2026-03-27 00:21:37,865 INFO streaming.PipeMapRed: MRErrorThread done
+2026-03-27 00:21:37,865 INFO streaming.PipeMapRed: mapRedFinished
+2026-03-27 00:21:37,869 INFO mapred.LocalJobRunner: 
+2026-03-27 00:21:37,870 INFO mapred.MapTask: Starting flush of map output
+2026-03-27 00:21:37,870 INFO mapred.MapTask: Spilling map output
+2026-03-27 00:21:37,870 INFO mapred.MapTask: bufstart = 0; bufend = 154; bufvoid = 104857600
+2026-03-27 00:21:37,870 INFO mapred.MapTask: kvstart = 26214396(104857584); kvend = 26214336(104857344); length = 61/6553600
+2026-03-27 00:21:37,879 INFO mapred.MapTask: Finished spill 0
+2026-03-27 00:21:37,893 INFO mapred.Task: Task:attempt_local477981434_0001_m_000000_0 is done. And is in the process of committing
+2026-03-27 00:21:37,896 INFO mapred.LocalJobRunner: Records R/W=1/1
+2026-03-27 00:21:37,896 INFO mapred.Task: Task 'attempt_local477981434_0001_m_000000_0' done.
+2026-03-27 00:21:37,909 INFO mapred.Task: Final Counters for attempt_local477981434_0001_m_000000_0: Counters: 23
+	File System Counters
+		FILE: Number of bytes read=1492
+		FILE: Number of bytes written=645971
+		FILE: Number of read operations=0
+		FILE: Number of large read operations=0
+		FILE: Number of write operations=0
+		HDFS: Number of bytes read=122
+		HDFS: Number of bytes written=0
+		HDFS: Number of read operations=5
+		HDFS: Number of large read operations=0
+		HDFS: Number of write operations=1
+		HDFS: Number of bytes read erasure-coded=0
+	Map-Reduce Framework
+		Map input records=1
+		Map output records=16
+		Map output bytes=154
+		Map output materialized bytes=192
+		Input split bytes=82
+		Combine input records=0
+		Spilled Records=16
+		Failed Shuffles=0
+		Merged Map outputs=0
+		GC time elapsed (ms)=0
+		Total committed heap usage (bytes)=275251200
+	File Input Format Counters 
+		Bytes Read=122
+2026-03-27 00:21:37,909 INFO mapred.LocalJobRunner: Finishing task: attempt_local477981434_0001_m_000000_0
+2026-03-27 00:21:37,909 INFO mapred.LocalJobRunner: map task executor complete.
+2026-03-27 00:21:37,912 INFO mapred.LocalJobRunner: Waiting for reduce tasks
+2026-03-27 00:21:37,912 INFO mapred.LocalJobRunner: Starting task: attempt_local477981434_0001_r_000000_0
+2026-03-27 00:21:37,920 INFO output.FileOutputCommitter: File Output Committer Algorithm version is 2
+2026-03-27 00:21:37,920 INFO output.FileOutputCommitter: FileOutputCommitter skip cleanup _temporary folders under output directory:false, ignore cleanup failures: false
+2026-03-27 00:21:37,920 INFO mapred.Task:  Using ResourceCalculatorProcessTree : [ ]
+2026-03-27 00:21:37,928 INFO mapred.ReduceTask: Using ShuffleConsumerPlugin: org.apache.hadoop.mapreduce.task.reduce.Shuffle@1ea1a902
+2026-03-27 00:21:37,929 WARN impl.MetricsSystemImpl: JobTracker metrics system already initialized!
+2026-03-27 00:21:37,953 INFO reduce.MergeManagerImpl: MergerManager: memoryLimit=1276431488, maxSingleShuffleLimit=319107872, mergeThreshold=842444800, ioSortFactor=10, memToMemMergeOutputsThreshold=10
+2026-03-27 00:21:37,956 INFO reduce.EventFetcher: attempt_local477981434_0001_r_000000_0 Thread started: EventFetcher for fetching Map Completion Events
+2026-03-27 00:21:37,995 INFO reduce.LocalFetcher: localfetcher#1 about to shuffle output of map attempt_local477981434_0001_m_000000_0 decomp: 188 len: 192 to MEMORY
+2026-03-27 00:21:37,997 INFO reduce.InMemoryMapOutput: Read 188 bytes from map-output for attempt_local477981434_0001_m_000000_0
+2026-03-27 00:21:37,999 INFO reduce.MergeManagerImpl: closeInMemoryFile -> map-output of size: 188, inMemoryMapOutputs.size() -> 1, commitMemory -> 0, usedMemory ->188
+2026-03-27 00:21:38,001 INFO reduce.EventFetcher: EventFetcher is interrupted.. Returning
+2026-03-27 00:21:38,002 INFO mapred.LocalJobRunner: 1 / 1 copied.
+2026-03-27 00:21:38,002 INFO reduce.MergeManagerImpl: finalMerge called with 1 in-memory map-outputs and 0 on-disk map-outputs
+2026-03-27 00:21:38,010 INFO mapred.Merger: Merging 1 sorted segments
+2026-03-27 00:21:38,011 INFO mapred.Merger: Down to the last merge-pass, with 1 segments left of total size: 181 bytes
+2026-03-27 00:21:38,012 INFO reduce.MergeManagerImpl: Merged 1 segments, 188 bytes to disk to satisfy reduce memory limit
+2026-03-27 00:21:38,012 INFO reduce.MergeManagerImpl: Merging 1 files, 192 bytes from disk
+2026-03-27 00:21:38,013 INFO reduce.MergeManagerImpl: Merging 0 segments, 0 bytes from memory into reduce
+2026-03-27 00:21:38,013 INFO mapred.Merger: Merging 1 sorted segments
+2026-03-27 00:21:38,014 INFO mapred.Merger: Down to the last merge-pass, with 1 segments left of total size: 181 bytes
+2026-03-27 00:21:38,014 INFO mapred.LocalJobRunner: 1 / 1 copied.
+2026-03-27 00:21:38,018 INFO streaming.PipeMapRed: PipeMapRed exec [/home/hadoop/./reducer.py]
+2026-03-27 00:21:38,020 INFO Configuration.deprecation: mapred.job.tracker is deprecated. Instead, use mapreduce.jobtracker.address
+2026-03-27 00:21:38,021 INFO Configuration.deprecation: mapred.map.tasks is deprecated. Instead, use mapreduce.job.maps
+2026-03-27 00:21:38,074 INFO streaming.PipeMapRed: R/W/S=1/0/0 in:NA [rec/s] out:NA [rec/s]
+2026-03-27 00:21:38,074 INFO streaming.PipeMapRed: R/W/S=10/0/0 in:NA [rec/s] out:NA [rec/s]
+2026-03-27 00:21:38,077 INFO streaming.PipeMapRed: Records R/W=16/1
+2026-03-27 00:21:38,081 INFO streaming.PipeMapRed: MRErrorThread done
+2026-03-27 00:21:38,082 INFO streaming.PipeMapRed: mapRedFinished
+2026-03-27 00:21:38,555 INFO mapred.Task: Task:attempt_local477981434_0001_r_000000_0 is done. And is in the process of committing
+2026-03-27 00:21:38,567 INFO mapred.LocalJobRunner: 1 / 1 copied.
+2026-03-27 00:21:38,567 INFO mapred.Task: Task attempt_local477981434_0001_r_000000_0 is allowed to commit now
+2026-03-27 00:21:38,580 INFO mapreduce.Job: Job job_local477981434_0001 running in uber mode : false
+2026-03-27 00:21:38,583 INFO mapreduce.Job:  map 100% reduce 0%
+2026-03-27 00:21:38,654 INFO output.FileOutputCommitter: Saved output of task 'attempt_local477981434_0001_r_000000_0' to hdfs://localhost:9000/query1_output
+2026-03-27 00:21:38,656 INFO mapred.LocalJobRunner: Records R/W=16/1 > reduce
+2026-03-27 00:21:38,656 INFO mapred.Task: Task 'attempt_local477981434_0001_r_000000_0' done.
+2026-03-27 00:21:38,659 INFO mapred.Task: Final Counters for attempt_local477981434_0001_r_000000_0: Counters: 30
+	File System Counters
+		FILE: Number of bytes read=1908
+		FILE: Number of bytes written=646163
+		FILE: Number of read operations=0
+		FILE: Number of large read operations=0
+		FILE: Number of write operations=0
+		HDFS: Number of bytes read=122
+		HDFS: Number of bytes written=51
+		HDFS: Number of read operations=10
+		HDFS: Number of large read operations=0
+		HDFS: Number of write operations=3
+		HDFS: Number of bytes read erasure-coded=0
+	Map-Reduce Framework
+		Combine input records=0
+		Combine output records=0
+		Reduce input groups=4
+		Reduce shuffle bytes=192
+		Reduce input records=16
+		Reduce output records=4
+		Spilled Records=16
+		Shuffled Maps =1
+		Failed Shuffles=0
+		Merged Map outputs=1
+		GC time elapsed (ms)=14
+		Total committed heap usage (bytes)=315621376
+	Shuffle Errors
+		BAD_ID=0
+		CONNECTION=0
+		IO_ERROR=0
+		WRONG_LENGTH=0
+		WRONG_MAP=0
+		WRONG_REDUCE=0
+	File Output Format Counters 
+		Bytes Written=51
+2026-03-27 00:21:38,660 INFO mapred.LocalJobRunner: Finishing task: attempt_local477981434_0001_r_000000_0
+2026-03-27 00:21:38,661 INFO mapred.LocalJobRunner: reduce task executor complete.
+2026-03-27 00:21:39,586 INFO mapreduce.Job:  map 100% reduce 100%
+2026-03-27 00:21:39,587 INFO mapreduce.Job: Job job_local477981434_0001 completed successfully
+2026-03-27 00:21:39,611 INFO mapreduce.Job: Counters: 36
+	File System Counters
+		FILE: Number of bytes read=3400
+		FILE: Number of bytes written=1292134
+		FILE: Number of read operations=0
+		FILE: Number of large read operations=0
+		FILE: Number of write operations=0
+		HDFS: Number of bytes read=244
+		HDFS: Number of bytes written=51
+		HDFS: Number of read operations=15
+		HDFS: Number of large read operations=0
+		HDFS: Number of write operations=4
+		HDFS: Number of bytes read erasure-coded=0
+	Map-Reduce Framework
+		Map input records=1
+		Map output records=16
+		Map output bytes=154
+		Map output materialized bytes=192
+		Input split bytes=82
+		Combine input records=0
+		Combine output records=0
+		Reduce input groups=4
+		Reduce shuffle bytes=192
+		Reduce input records=16
+		Reduce output records=4
+		Spilled Records=32
+		Shuffled Maps =1
+		Failed Shuffles=0
+		Merged Map outputs=1
+		GC time elapsed (ms)=14
+		Total committed heap usage (bytes)=590872576
+	Shuffle Errors
+		BAD_ID=0
+		CONNECTION=0
+		IO_ERROR=0
+		WRONG_LENGTH=0
+		WRONG_MAP=0
+		WRONG_REDUCE=0
+	File Input Format Counters 
+		Bytes Read=122
+	File Output Format Counters 
+		Bytes Written=51
+2026-03-27 00:21:39,611 INFO streaming.StreamJob: Output directory: /query1_output
+hadoop@bolt:~$ hdfs dfs -cat /query1_output/part-00000
+FAST	6.0
+Hadoop	4.0
+Peshawar	4.0
+TandoAllahyar	2.0
+hadoop@bolt:~$ stop-all.sh
+WARNING: Stopping all Apache Hadoop daemons as hadoop in 10 seconds.
+WARNING: Use CTRL-C to abort.
+Stopping namenodes on [localhost]
+Stopping datanodes
+Stopping secondary namenodes [bolt.taha]
+Stopping nodemanagers
+Stopping resourcemanager
+hadoop@bolt:~$ 
+\end{lstlisting}
+
+\end{document}
